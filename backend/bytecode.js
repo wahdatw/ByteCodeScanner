@@ -228,7 +228,7 @@ app.use("/api/v1/anaylizesimiliartoken", (req, res) => {
       const documents = await collections.find(filter).toArray();
 
       console.log("Documents matching key:", documents);
-      return documents && documents.length > 0 ? res.json(documents) : [];
+      return documents && documents.length > 0 ? res.json(documents) : res.json({"message": "There is no result"});
     } catch (error) {
       console.error("An error occurred:", error);
     }
