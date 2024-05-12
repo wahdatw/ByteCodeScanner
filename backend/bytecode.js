@@ -40,7 +40,7 @@ const TokenScanScript = async () => {
       const newDocument = change.fullDocument;
       allDocuments.push(newDocument);
     });
-    search();
+    // search();
     changeStream.on("error", (error) => {
       console.error("Change stream error:", error);
     });
@@ -214,7 +214,7 @@ console.log("createdAddress=>", createdAddress);
 };
 
 TokenScanScript();
-
+search();
 app.use("/api/v1/anaylizesimiliartoken", (req, res) => {
   const tokenAddress = req.query.param;
   
