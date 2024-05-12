@@ -231,12 +231,9 @@ app.use("/api/v1/anaylizesimiliartoken", (req, res) => {
       return documents && documents.length > 0 ? res.json(documents) : [];
     } catch (error) {
       console.error("An error occurred:", error);
-    } finally {
-      await client.close();
     }
   };
   getResults();
-  TokenScanScript();
 });
 
 app.get("/", (req, res) => {
