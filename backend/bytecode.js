@@ -1,3 +1,5 @@
+import express from "express";
+import cors from "cors";
 import * as ethers from "ethers";
 import { getContractAddress } from "@ethersproject/address";
 import { MongoClient } from "mongodb";
@@ -39,7 +41,6 @@ const TokenScanScript = async () => {
     await client.close();
   }
 };
-TokenScanScript();
 
 const provider = new ethers.WebSocketProvider(process.env.WebSocketProvider);
 
@@ -114,22 +115,22 @@ const search = async () => {
                 ERC20ABI,
                 provider
               );
-              let name, symbol, decimals, totalSupply;
-              try {
-                name = await contract.name();
-                symbol = await contract.symbol();
-                decimals = await contract.decimals();
-                totalSupply = await contract.totalSupply();
-              } catch (err) {
-                if (err.code === "CALL_EXCEPTION") break;
-              }
+              // let name, symbol, decimals, totalSupply;
+              // try {
+              //   name = await contract.name();
+              //   symbol = await contract.symbol();
+              //   decimals = await contract.decimals();
+              //   totalSupply = await contract.totalSupply();
+              // } catch (err) {
+              //   if (err.code === "CALL_EXCEPTION") break;
+              // }
 
-              if (
-                name &&
-                symbol &&
-                decimals.toString() &&
-                totalSupply.toString()
-              ) {
+              // if (
+              //   name &&
+              //   symbol &&
+              //   decimals.toString() &&
+              //   totalSupply.toString()
+              // ) {
                 for (let i = 0; i < allDocuments.length; i++) {
                   if (i + 1 >= allDocuments.length) {
                     break;
@@ -169,19 +170,19 @@ const search = async () => {
                   );
                   if (insertResult.insertedId) {
                     console.log(
-                      `Success: Latest message from ${"byteCodeScanResults"} written to tokenScanResults with new _id: ${
+                      `Success: Latest message from ${createdAddress} written to byteCodeScanResults with new _id: ${
                         insertResult.insertedId
                       }.`
                     );
                   } else {
                     console.log(
-                      `Failed to write message from ${"byteCodeScanResults"} to tokenScanResults.`
+                      `Failed to write message from ${createdAddress} to byteCodeScanResults.`
                     );
                   }
                 } catch (error) {
                   console.error("An error occurred:", error);
                 }
-              }
+              // }//end if
             }
           } catch (error) {
             console.error("Error inside while loop", error);
@@ -195,3 +196,25 @@ const search = async () => {
     console.error("Error in provider listening", error);
   }
 };
+
+const app = express();
+const port = 5000;
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Access-Control-Allow-Origin",
+    ],
+  })
+);
+app.get('/anaylizesimiliartoken', (req, res) => {
+  TokenScanScript();
+  res.send('Hello from Node API!');
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
