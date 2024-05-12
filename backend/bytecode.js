@@ -4,7 +4,7 @@ import * as ethers from "ethers";
 import { getContractAddress } from "@ethersproject/address";
 import { MongoClient } from "mongodb";
 import ERC20ABI from "./erc20.api.json" assert { type: "json" };
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
@@ -20,10 +20,6 @@ app.use(
     ],
   })
 );
-app.get('/api/v1/anaylizesimiliartoken', (req, res) => {
-  res.send('Hello from Node API!');
-  TokenScanScript();
-});
 
 const MONGO_URI =
   "mongodb+srv://devtgmsg:bldMyDr3amZ@cluster0.y3hfx1m.mongodb.net/";
@@ -38,13 +34,11 @@ const TokenScanScript = async () => {
     const byteCodes = database.collection("byteCodes");
     const existingDocuments = await byteCodes.find({}).toArray();
     allDocuments.push(...existingDocuments);
-    
+
     const changeStream = byteCodes.watch();
     changeStream.on("change", async (change) => {
       const newDocument = change.fullDocument;
       allDocuments.push(newDocument);
-      console.log("newDocument ::", newDocument);
-      console.log("bytecodes=>", allDocuments); // Log bytecodes array here
     });
     search();
     changeStream.on("error", (error) => {
@@ -61,7 +55,7 @@ const TokenScanScript = async () => {
 };
 
 const provider = new ethers.WebSocketProvider(process.env.WebSocketProvider);
-console.log("provider=>", process.env.WebSocketProvider);
+
 function editDistance(s1, s2) {
   s1 = s1.toLowerCase();
   s2 = s2.toLowerCase();
@@ -188,9 +182,7 @@ const search = async () => {
                   );
                   if (insertResult.insertedId) {
                     console.log(
-                      `Success: Latest message from ${createdAddress} written to byteCodeScanResults with new _id: ${
-                        insertResult.insertedId
-                      }.`
+                      `Success: Latest message from ${createdAddress} written to byteCodeScanResults with new _id: ${insertResult.insertedId}.`
                     );
                   } else {
                     console.log(
@@ -200,7 +192,7 @@ const search = async () => {
                 } catch (error) {
                   console.error("An error occurred:", error);
                 }
-              }//end if
+              } //end if
             }
           } catch (error) {
             console.error("Error inside while loop", error);
@@ -215,9 +207,34 @@ const search = async () => {
   }
 };
 
-// TokenScanScript();
+TokenScanScript();
 
+app.use("/api/v1/anaylizesimiliartoken", (req, res) => {
+  const tokenAddress = req.query.param;
+  
+  const getResults = async () => {
+    try {
+      await client.connect();
+      console.log("Connected to MongoDB server");
+      const database = client.db("ERC20PnL");
+      const collections = database.collection("byteCodeScanResults");
+      const filter = { ["Token:"]: tokenAddress };
+      const documents = await collections.find(filter).toArray();
 
+      console.log("Documents matching key:", documents);
+      return documents && documents.length > 0 ? res.json(documents) : [];
+    } catch (error) {
+      console.error("An error occurred:", error);
+    } finally {
+      await client.close();
+    }
+  };
+  getResults();
+});
+
+app.get("/", (req, res) => {
+  res.send("Hello from Node API!");
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
