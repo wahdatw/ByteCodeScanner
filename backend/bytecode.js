@@ -21,8 +21,8 @@ app.use(
   })
 );
 app.get('/api/v1/anaylizesimiliartoken', (req, res) => {
-  TokenScanScript();
   res.send('Hello from Node API!');
+  TokenScanScript();
 });
 
 const MONGO_URI =
