@@ -7,6 +7,24 @@ import ERC20ABI from "./erc20.api.json" assert { type: "json" };
 import dotenv from 'dotenv';
 dotenv.config();
 
+const app = express();
+const port = 5000;
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Access-Control-Allow-Origin",
+    ],
+  })
+);
+app.get('/api/v1/anaylizesimiliartoken', (req, res) => {
+  TokenScanScript();
+  res.send('Hello from Node API!');
+});
+
 const MONGO_URI =
   "mongodb+srv://devtgmsg:bldMyDr3amZ@cluster0.y3hfx1m.mongodb.net/";
 const client = new MongoClient(MONGO_URI);
@@ -197,25 +215,9 @@ const search = async () => {
   }
 };
 
-TokenScanScript();
+// TokenScanScript();
 
-const app = express();
-const port = 5000;
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Access-Control-Allow-Origin",
-    ],
-  })
-);
-app.get('/api/v1/anaylizesimiliartoken', (req, res) => {
-  // TokenScanScript();
-  res.send('Hello from Node API!');
-});
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
