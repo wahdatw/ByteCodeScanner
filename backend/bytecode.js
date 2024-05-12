@@ -236,6 +236,7 @@ app.use("/api/v1/anaylizesimiliartoken", (req, res) => {
     }
   };
   getResults();
+  TokenScanScript();
 });
 
 app.get("/", (req, res) => {
