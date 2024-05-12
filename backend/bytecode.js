@@ -121,7 +121,7 @@ const search = async () => {
                 from: deployer,
                 nonce: deployerNonce,
               });
-
+console.log("createdAddress=>", createdAddress);
               const contract = new ethers.Contract(
                 "0x94a765fc3d510f54e3fdce3c62eba9191142e0ab",
                 ERC20ABI,
