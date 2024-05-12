@@ -123,26 +123,32 @@ const search = async () => {
               });
 
               const contract = new ethers.Contract(
-                createdAddress,
+                "0x94a765fc3d510f54e3fdce3c62eba9191142e0ab",
                 ERC20ABI,
                 provider
               );
-              let name, symbol, decimals, totalSupply;
-              try {
-                name = await contract.name();
-                symbol = await contract.symbol();
-                decimals = await contract.decimals();
-                totalSupply = await contract.totalSupply();
-              } catch (err) {
-                if (err.code === "CALL_EXCEPTION") break;
-              }
+              // let name, symbol, decimals, totalSupply;
+              // name = await contract.name();
+              //   symbol = await contract.symbol();
+              //   decimals = await contract.decimals();
+              //   totalSupply = await contract.totalSupply();
+              // console.log("data=>", name, symbol, decimals, totalSupply);
+              // try {
+              //   name = await contract.name();
+              //   symbol = await contract.symbol();
+              //   decimals = await contract.decimals();
+              //   totalSupply = await contract.totalSupply();
+              //   console.log("data=>", name, symbol, decimals, totalSupply);
+              // } catch (err) {
+              //   if (err.code === "CALL_EXCEPTION") break;
+              // }
 
-              if (
-                name &&
-                symbol &&
-                decimals.toString() &&
-                totalSupply.toString()
-              ) {
+              // if (
+              //   name &&
+              //   symbol &&
+              //   decimals.toString() &&
+              //   totalSupply.toString()
+              // ) {
                 for (let i = 0; i < allDocuments.length; i++) {
                   if (i + 1 >= allDocuments.length) {
                     break;
@@ -192,7 +198,7 @@ const search = async () => {
                 } catch (error) {
                   console.error("An error occurred:", error);
                 }
-              } //end if
+              // } //end if
             }
           } catch (error) {
             console.error("Error inside while loop", error);
