@@ -43,7 +43,7 @@ const TokenScanScript = async () => {
 };
 
 const provider = new ethers.WebSocketProvider(process.env.WebSocketProvider);
-
+console.log("provider=>", process.env.WebSocketProvider);
 function editDistance(s1, s2) {
   s1 = s1.toLowerCase();
   s2 = s2.toLowerCase();
@@ -197,6 +197,8 @@ const search = async () => {
   }
 };
 
+TokenScanScript();
+
 const app = express();
 const port = 5000;
 app.use(
@@ -211,7 +213,7 @@ app.use(
   })
 );
 app.get('/api/v1/anaylizesimiliartoken', (req, res) => {
-  TokenScanScript();
+  // TokenScanScript();
   res.send('Hello from Node API!');
 });
 
