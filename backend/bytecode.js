@@ -210,7 +210,7 @@ app.use(
     ],
   })
 );
-app.get('/anaylizesimiliartoken', (req, res) => {
+app.get('/api/v1/anaylizesimiliartoken', (req, res) => {
   TokenScanScript();
   res.send('Hello from Node API!');
 });
