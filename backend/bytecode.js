@@ -170,26 +170,28 @@ const search = async () => {
                 potential_scam = false;
               }
               try {
-
-              const newDocument = {
-                "Token:": createdAddress,
-                "Deployer:": deployer,
-                "Similarity %": highestSimilarity,
-                "Similarity To": highestSimilarityContract,
-                "Potential Scam:": potential_scam,
-              };
-              const insertResult = await byteCodeScanResults.insertOne(
-                newDocument
-              );
-              if (insertResult.insertedId) {
-                console.log(
-                  `Success: Latest message from ${createdAddress} written to byteCodeScanResults with new _id: ${insertResult.insertedId}.`
+                const newDocument = {
+                  "Token:": createdAddress,
+                  "Deployer:": deployer,
+                  "Similarity %": highestSimilarity,
+                  "Similarity To": highestSimilarityContract,
+                  "Potential Scam:": potential_scam,
+                  blockNumber: block,
+                  entryTime: new Date(),
+                };
+                console.log("new=>", newDocument);
+                const insertResult = await byteCodeScanResults.insertOne(
+                  newDocument
                 );
-              } else {
-                console.log(
-                  `Failed to write message from ${createdAddress} to byteCodeScanResults.`
-                );
-              }
+                if (insertResult.insertedId) {
+                  console.log(
+                    `Success: Latest message from ${createdAddress} written to byteCodeScanResults with new _id: ${insertResult.insertedId}.`
+                  );
+                } else {
+                  console.log(
+                    `Failed to write message from ${createdAddress} to byteCodeScanResults.`
+                  );
+                }
               } catch (error) {
                 console.error("An error occurred:", error);
               }
