@@ -101,6 +101,9 @@ const search = async () => {
     provider.on("block", async (block) => {
       // console.log(`allDocuments: ${allDocuments}`);
       console.log(`Block Number: ${block}`);
+      await client.connect();
+      const database = client.db("ERC20PnL");
+      const byteCodeScanResults = database.collection("byteCodeScanResults");
       try {
         const blockData = await provider.getBlock(block);
         const txes = await blockData.transactions;
@@ -121,12 +124,12 @@ const search = async () => {
                 from: deployer,
                 nonce: deployerNonce,
               });
-console.log("createdAddress=>", createdAddress);
-              const contract = new ethers.Contract(
-                "0x94a765fc3d510f54e3fdce3c62eba9191142e0ab",
-                ERC20ABI,
-                provider
-              );
+              console.log("createdAddress=>", createdAddress);
+              // const contract = new ethers.Contract(
+              //   "0x94a765fc3d510f54e3fdce3c62eba9191142e0ab",
+              //   ERC20ABI,
+              //   provider
+              // );
               // let name, symbol, decimals, totalSupply;
               // name = await contract.name();
               //   symbol = await contract.symbol();
@@ -149,55 +152,47 @@ console.log("createdAddress=>", createdAddress);
               //   decimals.toString() &&
               //   totalSupply.toString()
               // ) {
-                for (let i = 0; i < allDocuments.length; i++) {
-                  if (i + 1 >= allDocuments.length) {
-                    break;
-                  }
-                  const similar = similarity(
-                    allDocuments[i].bytecode,
-                    FoundCode
-                  );
-                  if (similar > highestSimilarity) {
-                    highestSimilarity = similar;
-                    highestSimilarityContract = allDocuments[i].contract;
-                  } else {
-                    highestSimilarity = highestSimilarity;
-                  }
+              for (let i = 0; i < allDocuments.length; i++) {
+                if (i + 1 >= allDocuments.length) {
+                  break;
                 }
-                if (highestSimilarity >= 0.5) {
-                  potential_scam = true;
+                const similar = similarity(allDocuments[i].bytecode, FoundCode);
+                if (similar > highestSimilarity) {
+                  highestSimilarity = similar;
+                  highestSimilarityContract = allDocuments[i].contract;
                 } else {
-                  potential_scam = false;
+                  highestSimilarity = highestSimilarity;
                 }
-                try {
-                  await client.connect();
-                  const database = client.db("ERC20PnL");
-                  const byteCodeScanResults = database.collection(
-                    "byteCodeScanResults"
-                  );
+              }
+              if (highestSimilarity >= 0.5) {
+                potential_scam = true;
+              } else {
+                potential_scam = false;
+              }
+              // try {
 
-                  const newDocument = {
-                    "Token:": createdAddress,
-                    "Deployer:": deployer,
-                    "Similarity %": highestSimilarity,
-                    "Similarity To": highestSimilarityContract,
-                    "Potential Scam:": potential_scam,
-                  };
-                  const insertResult = await byteCodeScanResults.insertOne(
-                    newDocument
-                  );
-                  if (insertResult.insertedId) {
-                    console.log(
-                      `Success: Latest message from ${createdAddress} written to byteCodeScanResults with new _id: ${insertResult.insertedId}.`
-                    );
-                  } else {
-                    console.log(
-                      `Failed to write message from ${createdAddress} to byteCodeScanResults.`
-                    );
-                  }
-                } catch (error) {
-                  console.error("An error occurred:", error);
-                }
+              const newDocument = {
+                "Token:": createdAddress,
+                "Deployer:": deployer,
+                "Similarity %": highestSimilarity,
+                "Similarity To": highestSimilarityContract,
+                "Potential Scam:": potential_scam,
+              };
+              const insertResult = await byteCodeScanResults.insertOne(
+                newDocument
+              );
+              if (insertResult.insertedId) {
+                console.log(
+                  `Success: Latest message from ${createdAddress} written to byteCodeScanResults with new _id: ${insertResult.insertedId}.`
+                );
+              } else {
+                console.log(
+                  `Failed to write message from ${createdAddress} to byteCodeScanResults.`
+                );
+              }
+              // } catch (error) {
+              //   console.error("An error occurred:", error);
+              // }
               // } //end if
             }
           } catch (error) {
@@ -217,7 +212,7 @@ TokenScanScript();
 search();
 app.use("/api/v1/anaylizesimiliartoken", (req, res) => {
   const tokenAddress = req.query.param;
-  
+
   const getResults = async () => {
     try {
       await client.connect();
@@ -228,7 +223,9 @@ app.use("/api/v1/anaylizesimiliartoken", (req, res) => {
       const documents = await collections.find(filter).toArray();
 
       console.log("Documents matching key:", documents);
-      return documents && documents.length > 0 ? res.json(documents) : res.json({"message": "There is no result"});
+      return documents && documents.length > 0
+        ? res.json(documents)
+        : res.json({ message: "There is no result" });
     } catch (error) {
       console.error("An error occurred:", error);
     }
