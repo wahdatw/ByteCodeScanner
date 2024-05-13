@@ -169,7 +169,7 @@ const search = async () => {
               } else {
                 potential_scam = false;
               }
-              // try {
+              try {
 
               const newDocument = {
                 "Token:": createdAddress,
@@ -190,10 +190,10 @@ const search = async () => {
                   `Failed to write message from ${createdAddress} to byteCodeScanResults.`
                 );
               }
-              // } catch (error) {
-              //   console.error("An error occurred:", error);
-              // }
-              // } //end if
+              } catch (error) {
+                console.error("An error occurred:", error);
+              }
+              } //end if
             }
           } catch (error) {
             console.error("Error inside while loop", error);
