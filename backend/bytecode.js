@@ -193,7 +193,7 @@ const search = async () => {
               } catch (error) {
                 console.error("An error occurred:", error);
               }
-              } //end if
+              // } //end if
             }
           } catch (error) {
             console.error("Error inside while loop", error);
